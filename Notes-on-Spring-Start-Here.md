@@ -1,7 +1,5 @@
 
 2025-10-29 15:09
-URL (if applicable): file:///C:/Users/Ashley-PC/Documents/Books/Spring%20Start%20Here%20Learn%20what%20you%20need%20and%20learn%20it%20well%20(Laurentiu%20Spilca%20[Spilc%C4%83,%20Lauren%C8%9Biu])%20(Z-Library).pdf
-Author: Laurentiu Spilca
 
 # Spring Start Here
 
