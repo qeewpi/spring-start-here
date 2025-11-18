@@ -1,5 +1,7 @@
 
 2025-10-29 15:09
+URL (if applicable): file:///C:/Users/Ashley-PC/Documents/Books/Spring%20Start%20Here%20Learn%20what%20you%20need%20and%20learn%20it%20well%20(Laurentiu%20Spilca%20[Spilc%C4%83,%20Lauren%C8%9Biu])%20(Z-Library).pdf
+Author: Laurentiu Spilca
 
 # Spring Start Here
 
@@ -20,7 +22,7 @@ I was wondering how I could effectively learn from the book, considering it's in
 
 
 xviii
-![[Pasted image 20251029154915.png]]
+![[000 - Attachments/Pasted image 20251029154915.png]]
 
 
 xix
@@ -96,7 +98,7 @@ The non-business logic is the *"how"* – how will it do what the app needs to d
 
 In other words, your program needs to take user input and output. The data has to be sent in and out of the database, in which we implement certain logic to handle such. The user does not have to think about all these details, they only have to worry about how the program will do what they need out of it.
 
-![[Pasted image 20251030141703.png]]
+![[000 - Attachments/Pasted image 20251030141703.png]]
 
 
 6
@@ -120,7 +122,7 @@ As discussed in the previous note, there are a multitude of underlying processes
 
 Within the Spring framework are another set of frameworks that are designed to help you implement a specific part of an app faster.
 
-![[Pasted image 20251030142757.png]]
+![[000 - Attachments/Pasted image 20251030142757.png]]
 
 The Spring Core defines the mechanisms that Spring uses to integrate into the app.
 
@@ -133,7 +135,7 @@ Inversion of Control (IoC) in Spring, pertains to how we make the framework *wor
 >[!note]
 >In this context the term “controls” refers to actions like “creating an instance” or “calling a method.” A framework can create objects of the classes you define in your app. Based on the configurations that you write, Spring intercepts the method to augment it with various features. For example, Spring can intercept a specific method to log any error that might appear during the method’s execution.
 
-![[Pasted image 20251030143515.png]]
+![[000 - Attachments/Pasted image 20251030143515.png]]
 
 
 11
@@ -161,17 +163,17 @@ We don't always have to stick to a specific technology all the time. We can dete
 	3 The development of a desktop app
 	4 The development of a mobile app
 
-![[Pasted image 20251030151522.png]]
+![[000 - Attachments/Pasted image 20251030151522.png]]
 
 While the figure above can be quite intimidating to look at, understanding it at this point is of no importance. The figure above goes to show how complex an application can be in the real world, the Spring framework is utilized to reduce the level of complexity.
 
 Below is a diagram of the same use case for an application, utilizing the Spring framework.
 
-![[Pasted image 20251030151841.png]]
+![[000 - Attachments/Pasted image 20251030151841.png]]
 
 The diagram above is much more cohesive due to the nature of frameworks. As the author stated, they had to rewrite a 25 year old system from scratch using the Spring framework – by the end of it, they were able to reduce the lines of code by 40%.
 
-![[Pasted image 20251030152211.png]]
+![[000 - Attachments/Pasted image 20251030152211.png]]
 
 We can also utilize Spring for developing test automation apps. In the diagram above, we utilized different components of the Spring ecosystem to have a simpler implementation of functionalities.
 
@@ -269,7 +271,7 @@ It's a good reminder to focus more on the fundamentals or essentials rather than
 
 
 32
-![[Pasted image 20251031144151.png]]
+![[000 - Attachments/Pasted image 20251031144151.png]]
 
 At this point, I was able to create the Parrot class, an instance of it, and as well as an instance of the `AnnotationConfigApplicationContext` class.
 
@@ -283,11 +285,11 @@ We need to add the instance to the Spring context in order for the framework to 
 2. Create a method within the configuration class that returns the object instance of the object you want to add to the context and annotate it with @Bean.
 3. Make the Spring context utilize the configuration created from the first step.
 
-![[Pasted image 20251031151808.png]]
+![[000 - Attachments/Pasted image 20251031151808.png]]
 
 
 35
-![[Pasted image 20251031152529.png]]
+![[000 - Attachments/Pasted image 20251031152529.png]]
 
 > Observe that the name I used for the method doesn’t contain a verb. You probably learned that a Java best practice is to put verbs in method names because the methods generally represent actions. But for methods we use to add beans in the Spring context, we don’t follow this convention. Such methods represent the object instances they return and that will now be part of the Spring context. The method’s name also becomes the bean’s name (as in listing 2.8, the bean’s name is now “parrot”). By convention, you can use nouns, and most often they have the same name as the class.
 
@@ -373,7 +375,7 @@ Parrot p = context.getBean(Parrot.class);
 41
 #### Using stereotype annotations to add beans to the Spring context
 
-![[Pasted image 20251105161252.png]]
+![[000 - Attachments/Pasted image 20251105161252.png]]
 
 To use stereotype annotations, we first need to put the `@Component` annotation to the class we want to add as a bean to the Spring Context. Then we use the `@ComponentScan` annotation to the configuration class to tell Spring where to look for classes that utilize stereotype annotations.
 
@@ -385,7 +387,7 @@ In short, we need to:
 > 
 > The above implementation allows us to achieve similar results when using the `@Bean` annotation, with less code. However, if we attempt to call the `getter` method for the `name` attribute of the `Parrot` class, the program will return null. The `@Component` annotation simply creates an instance of the class, but does not define its attributes. The responsibility to assign such attributes is passed on to the programmer.
 
-![[Pasted image 20251105174843.png]]
+![[000 - Attachments/Pasted image 20251105174843.png]]
 
 
 44
@@ -474,8 +476,8 @@ for (Parrot p : allParrots) {
 }
 ```
 
-![[Pasted image 20251105185934.png]]
-![[Pasted image 20251105185242.png]]
+![[000 - Attachments/Pasted image 20251105185934.png]]
+![[000 - Attachments/Pasted image 20251105185242.png]]
 
 The solution would involve using the `registerBean` method. The method takes in the following parameters: the name of the bean to be added, the class we want to add to the Spring context, the Supplier instance for the class, and an optional `BeanDefinitionCustomizer` for properties like the `@Primary` annotation.
 
@@ -507,7 +509,7 @@ public class Main {
 }
 ```
 
-![[Pasted image 20251105185505.png]]
+![[000 - Attachments/Pasted image 20251105185505.png]]
 
 The fourth parameter for defining the other characteristics of the bean, such as setting it as `@Primary`, would be implemented as such:
 
@@ -547,11 +549,11 @@ For the two ways of establishing relationships between beans, we must conduct th
 1) Add the beans to the Spring context
 2) Establish the relationship between the beans
 
-![[Pasted image 20251106171140.png]]
+![[000 - Attachments/Pasted image 20251106171140.png]]
 
 In this specific example, we first want the classes "Parrot" and "Person" to be recognized by the Spring context. After the initial step, we need to establish the relationship between the two beans.
 
-![[Pasted image 20251106171424.png]]
+![[000 - Attachments/Pasted image 20251106171424.png]]
 
 As more technically presented in Figure 3.2, we observe the "has-a" relationship between "Person" and "Parrot". In a more literal sense, the *"The person has a parrot"*.
 
@@ -634,7 +636,7 @@ Person's parrot: null
 
 Since we have yet to establish the relationship between the two beans, the Person instance returns null for its attribute Parrot. 
 
-![[Pasted image 20251106172311.png]]
+![[000 - Attachments/Pasted image 20251106172311.png]]
 
 
 55
@@ -668,14 +670,14 @@ public class ProjectConfig {
 
 A common approach for "wiring" beans together is by simply calling the `@Bean` method from within one another in the configuration class.
 
-![[Pasted image 20251107202828.png]]
+![[000 - Attachments/Pasted image 20251107202828.png]]
 
 By directly calling the `parrot()` (which returns the bean) inside the `person()` method's setter for its Parrot attribute, we establish a "has-A" (owns) relationship between the two.
 
 > The `Person` bean "has-A" (owns) the `Parrot` bean.
 
-![[Pasted image 20251107203154.png]]
-![[Pasted image 20251107203202.png]]
+![[000 - Attachments/Pasted image 20251107203154.png]]
+![[000 - Attachments/Pasted image 20251107203202.png]]
 
 You might think this would create two instances of the `Parrot` class: one when Spring calls the `parrot()` method, and a second one when the `person()` method calls it.
 
@@ -691,7 +693,7 @@ Another alternative to the previous approach is by providing the type of object 
 
 This approach is a bit more flexible. With this approach, it doesn't matter if we used the `@Bean` annotation or the stereotype annotations to add the bean to the Spring context. We can call the type of object and Spring will perform "dependency injection" by looking for the bean within its context and inject it into the parameter.
 
-![[Pasted image 20251107210859.png]]![[Pasted image 20251107211126.png]]
+![[000 - Attachments/Pasted image 20251107210859.png]]![[000 - Attachments/Pasted image 20251107211126.png]]
 
 ```java
 @Configuration
@@ -764,11 +766,11 @@ public class ProjectConfig {
 
 By annotating the Parrot field of Person with the `@Autowired` annotation, we are instructing Spring to look at its context and assign the instance of the bean that matches this particular type or object. In simpler terms, we are telling it to "inject" the appropriate value in the annotated field.
 
-![[Pasted image 20251108211042.png]]
+![[000 - Attachments/Pasted image 20251108211042.png]]
 
 We can also observe that the stereotype annotation is being utilized in this example (`@Component` and `@ComponentScan`).
 
-![[Pasted image 20251108211245.png]]
+![[000 - Attachments/Pasted image 20251108211245.png]]
 
 >[!note]
 >The author mentions that while the stereotype annotation was utilized in this example, the `@Bean` annotation can also be used. However, in real-world scenarios, the stereotype and the `@Autowired` annotations are more frequently used together.
@@ -790,11 +792,11 @@ The second approach discussed in the book (injecting through constructor paramet
 
 As mentioned in the previous section, the second approach involves injecting the values through the constructor. 
 
-![[Pasted image 20251109180752.png]]
+![[000 - Attachments/Pasted image 20251109180752.png]]
 
 When we set the public constructor for the class with the `@Autowired` annotation as well as pass on the object that we want, Spring takes a look at its context to search for the appropriate bean to the constructor parameters. Since we implemented it within the constructor, we can freely set the corresponding field outside the constructor as "final" and assign the instance from the Spring context as its value. 
 
-![[Pasted image 20251109181119.png]]
+![[000 - Attachments/Pasted image 20251109181119.png]]
 
 
 65
@@ -827,7 +829,7 @@ public class Person {
 66
 #### Dealing with circular dependencies
 
-![[Pasted image 20251111200759.png]]
+![[000 - Attachments/Pasted image 20251111200759.png]]
 
 Spring handles the building and managing of dependencies to objects of our application, however, it's important that we avoid creating "circular dependencies".
 
@@ -839,13 +841,13 @@ When Spring looks at its context and discovers that there is no instance of the 
 
 We can avoid circular dependency by making sure we don't define objects whose creation depends on one another. Having such relationship between two objects is a symptom of a design issue to begin with.
 
-![[Pasted image 20251111201318.png]]
+![[000 - Attachments/Pasted image 20251111201318.png]]
 
 The above is an example of circular dependency, where we can observe how the `Person` bean's instantiation is dependent on the `Parrot` bean, and vice versa.
 
 Running the app would result in the following error:
 
-![[Pasted image 20251111201445.png]]
+![[000 - Attachments/Pasted image 20251111201445.png]]
 
 
 68
@@ -858,7 +860,7 @@ There are multiple ways where we can instruct which Spring chooses as the bean w
 3. If the previous conditions are not met, Spring chooses the bean in the Spring context marked with the `@Primary` annotation.
 4. If none of these conditions above are met, the program will return an exception.
 
-![[Pasted image 20251113183122.png]]
+![[000 - Attachments/Pasted image 20251113183122.png]]
 
 ```Output
 Person's name: Ella
@@ -955,7 +957,7 @@ Person's name: Ella
 Person's parrot: Parrot : Miki
 ```
 
-![[Pasted image 20251113185245.png]]
+![[000 - Attachments/Pasted image 20251113185245.png]]
 
 This slightly altered code demonstrates how the Spring framework determines which bean will be injected, in this case, both the `@Bean` annotation and the stereotype annotation are used.
 
@@ -979,3 +981,48 @@ public class Person {
 
 > The behavior of the app doesn’t change, and the output remains the same. This approach makes your code less subject to mistakes.
 
+## Chapter 4: The Spring context: Using abstractions
+
+75
+
+The chapter focuses on using abstraction using Spring beans. The author notes that abstraction is especially important in real-world projects, particularly for decoupling implementations. Through this, we ensure that the application becomes easier maintain and test.
+
+
+76
+#### Using interfaces to define contracts
+
+The section reviews the use of interfaces in Java to define contracts.
+
+> The interface specifies "what needs to happen", while the objects implementing the interface specifies "how it should happen".
+
+> I learned that it’s always smarter to ask for what you need instead of for a solution when you have no idea what you’re doing. Interfaces are the way objects ask for what they need.
+
+Objects implementing interfaces simply ask the interface, what tools do I need to solve the problem? The specific implementation of the solution using the said tools is entirely up to the object.
+
+##### Using interfaces for decoupling implementations
+
+To better explain the concept of interfaces, the author gives an example of a ride sharing app. In a ride sharing app, typically, the customer does not have to worry about what model the car is or what it looks like – their only focus is getting to their destination. Similarly, the driver only wants to get a customer but doesn't care about *who* the customer is.
+
+Suppose you are developing a functionality for printing a package's details for a shipping app. The details need to be sorted by their destination address, and as a result, you want the object to delegate this responsibility to another object.
+
+![](000%20-%20Attachments/Pasted%20image%2020251118102146.png)
+
+The implementation above does exactly this. However, this implementation presents some issues.
+
+The `DeliveryDetailsPrinter` and `SorterByAdrress` objects are strongly coupled, this means that if somewhere down the line, we decide to change the way we sort the addresses – we would need to change multiple areas of the code. The optimal design for such implementation is to avoid having to make changes to the object using the responsibility (of sorting addresses, in this case).
+
+![](000%20-%20Attachments/Pasted%20image%2020251118102242.png)
+
+ We can utilize interfaces to improve the design as discussed previously. In the new implementation below, we create a `Sorter` interface. The `DeliveryDetailsPrinter` can utilize this new interface, so regardless of specificity, the details will still be sorted accordingly.
+
+Under the `Sorter` interface, there are two different classes implementing it: `SorterByAddress` and `SorterByName`. We can add as many objects implementing the same interface as necessary, and more importantly, we don't have to worry about breaking the application because the `DeliveryDetailsPrinter` isn't tightly coupled to any specific implementation of the `Sorter` interface.
+
+![](000%20-%20Attachments/Pasted%20image%2020251118102358.png)
+
+```java
+public interface Sorter {
+	void sortDetails();
+}
+```
+
+![](000%20-%20Attachments/Pasted%20image%2020251118112444.png)
