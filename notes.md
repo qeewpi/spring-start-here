@@ -1013,7 +1013,7 @@ The `DeliveryDetailsPrinter` and `SorterByAdrress` objects are strongly coupled,
 
 ![](000%20-%20Attachments/Pasted%20image%2020251118102242.png)
 
- We can utilize interfaces to improve the design as discussed previously. In the new implementation below, we create a `Sorter` interface. The `DeliveryDetailsPrinter` can utilize this new interface, so regardless of specificity, the details will still be sorted accordingly.
+We can utilize interfaces to improve the design as discussed previously. In the new implementation below, we create a `Sorter` interface. The `DeliveryDetailsPrinter` can utilize this new interface, so regardless of specificity, the details will still be sorted accordingly.
 
 Under the `Sorter` interface, there are two different classes implementing it: `SorterByAddress` and `SorterByName`. We can add as many objects implementing the same interface as necessary, and more importantly, we don't have to worry about breaking the application because the `DeliveryDetailsPrinter` isn't tightly coupled to any specific implementation of the `Sorter` interface.
 
@@ -1026,3 +1026,133 @@ public interface Sorter {
 ```
 
 ![](000%20-%20Attachments/Pasted%20image%2020251118112444.png)
+
+
+79
+##### The requirement of the scenario
+
+> Say you are implementing an app a team uses to manage their tasks. One of the app’s features is allowing the users to leave comments for the tasks. When a user publishes a comment, it is stored somewhere (e.g., in a database), and the app sends an email to a specific address configured in the app.
+> 
+> We need to design the objects and find the right responsibilities and abstractions for implementing this feature.
+
+
+80
+##### Implementing the requirement without using a framework
+
+Objects implementing use cases are referred to as *services*.
+
+In the scenario discussed previously, we would need a service that implements the "publish comment" use case. The object is named `CommentService`; the author notes that it is preferable to insert "Service" at the end of the name of any service class to make its role in the project clearer (and stand out).
+
+When analyzing the requirements of the scenario, we recognize that the use case consists of two actions: storing the comment and sending the comment by mail. These actions are two different responsibility, and thus we need to implement two objects.
+
+An object that works directly with a database is generally named *repository*. Sometimes, these objects can also be referred to as *data access objects* (DAO). In this scenario, we name the object that implements the storing comment responsibility as `CommentRepository`.
+
+When implementing objects whose responsibility is to establish communication with something outside the application, we name these objects *proxies*. In this scenario, we follow this convention and name the object whose responsibility is sending the email `CommentNotificationProxy`.
+
+> But wait! Didn’t we say we shouldn’t use direct coupling between implementations? We need to make sure we decouple the implementations by using interfaces.
+
+In an application, a lot can always change, and we want to make sure that implementing changes will be easy. Through implementing them as interfaces instead of objects, we can ensure that we avoid any direct coupling between implementations.
+
+![](000%20-%20Attachments/Pasted%20image%2020251120185000.png)
+
+![](000%20-%20Attachments/Pasted%20image%2020251120185202.png)
+
+We can now begin with the implementation of the project in code.
+
+![](000%20-%20Attachments/Pasted%20image%2020251120191920.png)
+
+We first setup the packages to organize our project, making it easy to understand. 
+
+We create a *POJO* (Plain Old Java Object) to represent the comment object. The responsibility of this type of object is to model the data the app uses, thus we place it within a package called *model*.
+
+```java
+public class Comment {  
+    private String author;  
+  
+    private String text;  
+  
+	// Omitted getters and setters
+}
+```
+
+```java
+public interface CommentRepository {  
+    void storeComment(Comment comment);  
+}
+```
+
+```java
+public class DBCommentRepository implements CommentRepository {  
+  
+    @Override  
+    public void storeComment(Comment comment) {  
+        System.out.println("Storing comment: " + comment.getText());  
+    }  
+}
+```
+
+As we don't know how to connect to a database yet at this point, we simulate this action through the console for now. 
+
+The same goes for the `EmailCommentNotificationProxy` class.
+
+```java
+public class EmailCommentNotificationProxy implements CommentNotificationProxy {  
+    @Override  
+    public void sendComment(Comment comment) {  
+        System.out.println("Sending notification for comment: " +  
+                comment.getText());  
+    }  
+}
+```
+
+Finally, we can implement the `CommentService` class utilizing both the `CommentRepository` and the `CommentNotificationProxy` interfaces.
+
+```java
+public class CommentService {  
+  
+    // We define the two dependencies as attributes of the class.  
+    private final CommentRepository commentRepository;  
+    private final CommentNotificationProxy commentNotificationProxy;  
+  
+    /* We provide the dependencies when the object is  
+    built through the parameters of the constructor. */    public CommentService(CommentRepository commentRepository, CommentNotificationProxy commentNotificationProxy) {  
+        this.commentRepository = commentRepository;  
+        this.commentNotificationProxy = commentNotificationProxy;  
+    }  
+  
+    /* We implement the use case that delegates the “store comment” and   
+    “send notification” responsibilities to the dependencies. */  
+    public void publishComment(Comment comment) {  
+        commentRepository.storeComment(comment);  
+        commentNotificationProxy.sendComment(comment);  
+    }  
+}
+```
+
+In the main class, we can test the whole class design.
+
+```java
+public class Main {  
+    public static void main(String[] args) {  
+        // Creates the instance for the dependencies  
+        var commentRepository = new DBCommentRepository();  
+        var commentNotificationProxy = new EmailCommentNotificationProxy();  
+        // Creates the instance of the service class and providing the dependencies  
+        var commentService = new CommentService(commentRepository, commentNotificationProxy);  
+  
+        // Creates an instance of comment to send as a parameter to the publish comment use case  
+        var comment = new Comment();  
+        comment.setAuthor("Laurentiu");  
+        comment.setText("Demo comment");  
+  
+        // Calls the publish comment use case  
+        commentService.publishComment(comment);  
+    }  
+}
+```
+
+```Output
+Storing comment: Demo comment
+Sending notification for comment: Demo comment
+```
+
