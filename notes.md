@@ -1156,3 +1156,174 @@ Storing comment: Demo comment
 Sending notification for comment: Demo comment
 ```
 
+
+85
+#### Using dependency injection with abstractions
+
+In this section, we apply the Spring framework over the class design we implemented previously.
+
+The goal of this section is to improve the reader's understanding of how Spring manages dependency injection when using abstractions.
+
+
+85
+##### Deciding which objects should be part of the Spring context
+
+It's important to recognize whether or not an object has to be part of the Spring context. 
+
+It all comes down to a simple question:
+
+> “Does this object need to be managed by the framework?”
+
+In the previous scenario, we only need to add an object to the Spring context if it has a dependency we need to inject from the context or if it's a dependency itself.
+
+The only object in that doesn't have a dependency nor a dependency itself is `Comment`.
+
+- `CommentService` - Has two dependencies, the `CommentRepository` and the `CommentNotificationProxy`.
+- `DBCommentRepository` - Implements the `CommentRepository` interface and is a dependency of the `CommentService`.
+- `EmailCommentNotificationProxy` - Implements the `CommentNotificationProxy` interface and is a dependency of the `CommentService`.
+
+You might wonder why we didn't add the `Comment` class to the Spring context, the author explicitly states the following reason for this:
+
+> Adding objects to the Spring context without needing the framework to manage them adds unnecessary complexity to your app, making the app both more challenging to maintain and less performant. (...) If you add the object to be managed by Spring without getting any benefit from the framework, you just over-engineer your implementation.
+
+When adding objects to the Spring context, in this case, we can use stereotype annotations (`@Component`). However, it's important to remember that it doesn't make sense to annotate abstract or interface classes as these cannot be instantiated.
+
+```java
+/* Marking the class with @Component instructs Spring 
+to instantiate the class and add an instance as a bean
+in its context. */
+@Component
+public class DBCommentRepository implements CommentRepository {
+	@Override
+	public void storeComment(Comment comment) {
+	System.out.println("Storing comment: " + comment.getText());
+	}
+}
+```
+
+![](000%20-%20Attachments/Pasted%20image%2020251124205558.png)
+
+```java
+@Component  
+public class EmailCommentNotificationProxy implements CommentNotificationProxy {  
+    @Override  
+    public void sendComment(Comment comment) {  
+        System.out.println("Sending notification for comment: " +  
+                comment.getText());  
+    }  
+}
+```
+
+The `CommentService` class declares the dependencies to the other two components through the interfaces `CommentRepository` and `CommentNotificationProxy`.
+
+Spring is smart enough to recognize that the attributes are defined with interface types, and thus, looks at the context to search for beans created with classes that implement the interfaces.
+
+```java
+// Spring creates a bean of this class and adds it to its context  
+@Component  
+public class CommentService {  
+  
+    private final CommentRepository commentRepository;  
+    private final CommentNotificationProxy commentNotificationProxy;  
+  
+    /* We would have to use @Autowired if the class had more than one constructor.  
+    Spring uses this constructor to create the bean and injects references    from its context in the parameters when creating the instance. */    public CommentService(CommentRepository commentRepository, CommentNotificationProxy commentNotificationProxy) {  
+        this.commentRepository = commentRepository;  
+        this.commentNotificationProxy = commentNotificationProxy;  
+    }  
+  
+    public void publishComment(Comment comment) {  
+        commentRepository.storeComment(comment);  
+        commentNotificationProxy.sendComment(comment);  
+    }  
+}
+```
+
+```java
+// The @Configuration annotation marks the configuration class.  
+@Configuration 
+
+/* We use the @ComponentScan annotation to tell Spring in which  
+packages to search for the classes annotated with stereotype  
+annotations. Observe that the model package is not specified because it  
+doesn’t contain classes annotated with stereotype annotations. */  
+@ComponentScan(basePackages = {"proxies", "repositories", "services"})  
+public class ProjectConfig {  
+}
+```
+
+> [!note] 
+> The author notes that one can either use the `basePackages` attribute of the `ComponentScan` annotation, or the `basePackageClasses` attribute of the same annotation. Both approaches have its own advantages and disadvantages. For instance, with the `basePackages` attribute, if the developer decides to change the name of the package – they would have to make the same change within the configuration class. On the other hand, with `basePackageClasses`, if changes are made to the name of a class, the error specifying this discrepancy would show up.
+
+```java
+public class Main {  
+    public static void main(String[] args) {  
+        var context = new AnnotationConfigApplicationContext(ProjectConfig.class);  
+  
+        var comment = new Comment();  
+        comment.setAuthor("Laurentiu");  
+        comment.setText("Demo comment");  
+  
+        var commentService = context.getBean(CommentService.class);  
+        commentService.publishComment(comment);  
+    }  
+}
+```
+
+```Output
+Storing comment: Demo comment
+Sending notification for comment: Demo comment
+```
+
+With the implementation of the Spring framework to the example scenario, we can already see a difference. In the `Main` class, for example, we no longer had to create an instance of the `CommentService` class as well as its dependencies.
+
+In a real-world scenario, we will end up having to manage several classes and managing them all without the Spring framework would be difficult to maintain. Having a framework like Spring makes all the difference; it reduces boilerplate code, allowing the developers to focus on functionality.
+###### Different ways of using dependency injection with abstraction
+
+1. Field dependency injection using `@Autowired`
+
+```java
+@Component
+public class CommentService {
+	/* Fields are no longer final, and they are marked with @Autowired. Spring uses the default constructor to create the instance of the class and then injects the two dependencies from its context. */
+	@Autowired
+	private CommentRepository commentRepository;
+	
+	@Autowired
+	private CommentNotificationProxy commentNotificationProxy;
+	
+	public void publishComment(Comment comment) {
+		commentRepository.storeComment(comment);
+		commentNotificationProxy.sendComment(comment);
+	}
+}
+```
+
+2. `@Bean` annotated methods
+
+```java
+/* Because we don’t use stereotype  
+annotations, we no longer need to use  
+the @ComponentScan annotation. */  
+@Configuration  
+public class ProjectConfig {  
+  
+    // We create a bean for each of the two dependencies  
+    @Bean  
+    public CommentRepository commentRepository() {  
+        return new DBCommentRepository();  
+    }  
+  
+    @Bean  
+    public CommentNotificationProxy commentNotificationProxy() {  
+        return new EmailCommentNotificationProxy();  
+    }  
+  
+    /* We use parameters of the @Bean method (which are now defined with  
+    the interface type) to instruct Spring to provide references for beans    from its context, compatible with the type of the parameters. */    @Bean  
+    public CommentService commentService(CommentRepository commentRepository,  
+                                         CommentNotificationProxy commentNotificationProxy) {  
+        return new CommentService(commentRepository, commentNotificationProxy);  
+    }  
+}
+```
