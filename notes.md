@@ -1327,3 +1327,145 @@ public class ProjectConfig {
     }  
 }
 ```
+
+
+91
+##### Choosing what to auto-wire from multiple implementations of an abstraction
+
+In this section, we discuss what happens if the Spring context contains more instances that match a requested abstraction.
+
+![](000%20-%20Attachments/Pasted%20image%2020251125210325.png)
+
+In the figure above, we can see that we have two different implementations of the `CommentNotificationProxy` interface. When using dependency injection on the interface, we need to instruct Spring which implementation it should inject between the two.
+
+```java
+@Component  
+public class CommentPushNotificationProxy implements CommentNotificationProxy {  
+    @Override  
+    public void sendComment(Comment comment) {  
+        System.out.println("Sending push notification for comment: " + comment.getText());  
+    }  
+}
+```
+
+Running the same example from `sq-ch4-ex2` with the newly added implementation will return an error:
+
+```Output
+Caused by: org.springframework.beans.factory.NoUniqueBeanDefinitionException:
+
+No qualifying bean of type 'proxies.CommentNotificationProxy' available:
+expected single matching bean but found 2:
+
+commentPushNotificationProxy,emailCommentNotificationProxy
+```
+
+###### Marking an implementation as default for injection with `@Primary`
+
+The first solution is to simply set an implementation as default with the `@Primary` annotation as demonstrated below:
+
+```java
+@Component
+@Primary
+public class CommentPushNotificationProxy implements CommentNotificationProxy {
+	@Override
+	public void sendComment(Comment comment) {
+		System.out.println(
+		"Sending push notification for comment: "
+		+ comment.getText());
+	}
+}
+```
+
+![](000%20-%20Attachments/Pasted%20image%2020251125211819.png)
+
+
+94
+###### Naming implementation for dependency injection with `@Qualifier`
+
+Sometimes in production apps, we need to define more implementations of the same interface, and have different objects use these implementations.
+
+For instance, we want to have two different implementations for the comment notification: by push notification or by email. These are implementations of the same interface, but they depend on different objects in the app.
+
+![](000%20-%20Attachments/Pasted%20image%2020251125212950.png)
+
+```java
+@Component  
+@Qualifier("PUSH")  
+public class CommentPushNotificationProxy implements CommentNotificationProxy {  
+    @Override  
+    public void sendComment(Comment comment) {  
+        System.out.println("Sending push notification for comment: " + comment.getText());  
+    }  
+}
+```
+
+```java
+@Component  
+@Qualifier("EMAIL")  
+public class EmailCommentNotificationProxy implements CommentNotificationProxy {  
+    @Override  
+    public void sendComment(Comment comment) {  
+        System.out.println("Sending notification for comment: " +  
+                comment.getText());  
+    }  
+}
+```
+
+For each parameter where we want to use a specific implementation, we need to annotate the parameter with `@Qualifier`.
+
+```java
+@Component  
+public class CommentService {  
+  
+    private final CommentRepository commentRepository;  
+    private final CommentNotificationProxy commentNotificationProxy;  
+  
+    /* For each parameter where we want to use a specific  
+    implementation, we annotate the parameter with @Qualifier. */    
+    public CommentService(CommentRepository commentRepository, @Qualifier("PUSH") CommentNotificationProxy commentNotificationProxy) {  
+        this.commentRepository = commentRepository;  
+        this.commentNotificationProxy = commentNotificationProxy;  
+    }  
+  
+    // Omitted code
+}
+```
+
+```Output
+Storing comment: Demo comment
+Sending push notification for comment: Demo comment
+```
+
+
+96
+##### Focusing on object responsibilities with stereotype annotations
+
+Thus far, all of our examples utilize the `@Component` stereotype annotation.
+
+There are two more stereotype annotations: `@Service` and `@Repository`.
+- `@Service` - objects whose responsibility is implementing the use cases.
+- `@Repository` - objects whose responsibility is managing the data persistence.
+
+> (...) These responsibilities are so common in projects, and they are important in the class design, having a distinctive way of marking them helps the developer better understand the app design.
+
+All three (`@Component`, `@Service`, and `@Repository`) are stereotype annotations and instruct Spring to create and add an instance of the annotated class to its context.
+
+![](000%20-%20Attachments/Pasted%20image%2020251125220826.png)
+
+We use `@Service` to define this object as a component having the responsibility of service.
+
+```java
+@Service
+public class CommentService {
+	// Omitted code
+}
+```
+
+We use `@Repository` to define this object as a component with the responsibility of the repository.
+
+```java
+@Repository
+public class DBCommentRepository implements CommentRepository {
+	// Omitted code
+}
+```
